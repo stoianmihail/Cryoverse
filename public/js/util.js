@@ -311,6 +311,12 @@ function parse_url(url) {
   return parsed;
 }
 
+// ******************************** T e x t  U t i l s ********************************
+
+function text2html(text) {
+  return text.replaceAll('\n', '<br>');
+}
+
 // ******************************** T i m e  U t i l s ********************************
 
 function getTimestamp() {

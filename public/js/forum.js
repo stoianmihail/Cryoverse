@@ -36,7 +36,7 @@ async function renderThread(id) {
                   <small class="text-muted ml-2">${nl_time}</small>
                   <h5 class="mt-1">${dict.title}</h5>
                   <div class="mt-3 font-size-sm">
-                      <p>${dict.content}</p>
+                      <p>${text2html(dict.content)}</p>
                   </div>
                   ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
                   <p>Actions: <button class="btn-sm btn far fa-star"> Star (${num_stars})</button><button class="btn-sm btn far fa-bookmark"> Bookmark</button><button id='${id}' class="btn-sm btn fa fa-reply" onclick='reply(this);'> Reply</button></p>
@@ -70,7 +70,7 @@ async function renderThread(id) {
                     <a href="javascript:void(0)" class="text-secondary">${response.user}</a>
                     <small class="text-muted ml-2">${local_time}</small>
                     <div class="mt-3 font-size-sm">
-                        <p>${response.content}</p>
+                        <p>${text2html(response.content)}</p>
                     </div>
                 </div>
             </div>
@@ -147,6 +147,9 @@ function reply(elem) {
               </div>
           </div>
       </div>`);
+
+    // Reinitialize textareas.
+    $('.textarea-autosize').textareaAutoSize();
   }, { id : elem.id }, window.location.href, () => {});
 }
 
