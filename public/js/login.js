@@ -14,7 +14,7 @@ $('.toggle').click(function(){
 document.addEventListener('DOMContentLoaded', (event) => {
   var login_button = document.getElementById("login-button");
   var register_button = document.getElementById("register-button");
-  var company = null;
+  var username = null;
 
   function getAttributes(type) {
     var dict = {}
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       dict["password"] = document.getElementById(type + "-password").value
     }
     if (type === "register") {
-			dict["company"] = document.getElementById(type + "-company").value;
+			dict["username"] = document.getElementById(type + "-username").value;
     }
     return dict;
   }
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const promise = auth.signInWithEmailAndPassword(attr["email"], attr["password"]);
       promise.catch(e => console.log(e.message));
     } else if (type === "register") {
-      company = attr["company"];
+      username = attr["username"];
       const promise = auth.createUserWithEmailAndPassword(attr["email"], attr["password"]);
       promise.then(() => {
         console.log("finished?");
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
   }
 
-  function accessDasboard(uid, company) {
+  function accessForum(uid, username) {
     console.log(parsed_url);
     if ((wasNotLoggedIn) && (parsed_url['state'] === 'first')) {
       window.location = 'forum.html';
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Ask the user.
     // TODO: maybe the user wants to access another page, based on `parsed_url['return']`.
     swal({
-      title: `You're currently logged in as ${company}`,
+      title: `You're currently logged in as ${username}`,
       text: "Do you want to access the forum?",
       icon: "warning",
       buttons: [
@@ -92,23 +92,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   }
 
-  console.log(window.location.href);
-
   function register(uid) {
     db.ref('users').child(uid).once("value", snapshot => {
       if (snapshot.exists()) {
-        accessDasboard(uid, snapshot.val().company);
+        accessForum(uid, snapshot.val().username);
       } else {
-				console.log("check company=" + company);
-        // Sign up? Check for company
-        if (company === null) {
+				console.log("check username=" + username);
+        // Sign up? Check for username
+        if (username === null) {
           // Unreachable (if the app works correctly)
-          console.log("No company found!");
+          console.log("No username found!");
         } else {
           db.ref('users').child(uid).set({
-            username: company,
+            username: username,
 					}).then(() => {
-            accessDasboard(uid, company);
+            accessForum(uid, username);
           }).catch(err => {
             // TODO: inform user
             console.error(err);
@@ -134,6 +132,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   var wasNotLoggedIn = false;
   var lock = disableScreen();
   var parsed_url = parse_url(window.location.href);
+
   auth.onAuthStateChanged(firebaseUser => {
     enableScreen(lock);
     if (firebaseUser) {

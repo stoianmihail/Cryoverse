@@ -1,16 +1,73 @@
 const ACCOUNTING_COMPANY = 1;
 
 // The current user.
-var current_user = { 'uid' : undefined, 'company' : undefined, 'type' : undefined};
+var current_user = { 'uid' : undefined, 'username' : undefined };
 
-// auth.onAuthStateChanged(firebaseUser => {
-//   if (firebaseUser) {
-//     console.log("Logged in!");
-//     console.log('uid=' + firebaseUser.uid);
-//   } else {
-//     console.log("Not logged in!");
-//   }
-// });
+function resetCurrentUser() {
+  current_user = { 'uid' : undefined, 'username' : undefined };
+}
+
+function changeWindowLocation(args) {
+  window.location = args['location'];
+}
+
+// Fetch the user.
+function retrieveCurrentUser(callback, args, page, askUserForLogin=false, valid=true) {  
+  auth.onAuthStateChanged(firebaseUser => {
+    console.log(firebaseUser);
+    // Do we still have an user?
+    if (firebaseUser) {
+      // Check if the request is still valid.
+      if (!valid) return;
+      valid = false;
+      
+      db.ref('users').child(firebaseUser.uid).once('value', snapshot => {
+        if (snapshot.exists()) {
+          current_user = { uid : firebaseUser.uid, username : snapshot.val().username };
+          args['user'] = current_user.uid;
+          
+          if (callback[Symbol.toStringTag] === 'AsyncFunction') {
+            callback(args).then(() => {
+              enableScreen();
+            });
+          } else {
+            callback(args);
+            enableScreen();
+          }
+        } else {
+          console.log('Snapshot doesn\'t exist!');
+        }
+      }).catch((e) => {
+        console.log(e);
+      });
+    } else {
+      // Reset the current user.
+      resetCurrentUser();
+
+      // Enable the screen.
+      enableScreen();
+
+      if (askUserForLogin) {
+        swal({
+          title: `You're not currently logged in`,
+          text: "Do you want to login?",
+          icon: "warning",
+          buttons: [
+            'No',
+            'Yes'
+          ]
+        }).then(function(isConfirm) {
+          if (isConfirm) {
+            window.location = 'login.html?return=' + page;
+            return;
+          }
+
+          window.location = 'index.html';
+        });
+      }
+    }
+  });
+}
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -192,6 +249,8 @@ async function buildFolder(folderName, folderContent, target_uid, target_company
 
 // ******************************** S c r e e n  U t i l s ********************************
 function disableScreen() {
+
+  console.log('inside disable');
   // Disable the wrapper.
   $('.wrapper').css('pointer-events', 'none');
   
@@ -213,6 +272,7 @@ function release() {
 }
 
 function enableScreen() {
+  console.log('inside enable');
   $('#loader').css('display', 'none');
   release();
 }
@@ -224,8 +284,8 @@ function parse_url(url) {
   let split = url.substring(url.indexOf('?') + 1).split('&');
   let parsed = {};
   split.forEach(element => {
-    let content = element.split('=');
-    parsed[content[0]] = content[1];
+    let content = element.split('=', limit=1);
+    parsed[content[0]] = element.substring(element.indexOf('=') + 1);
   });
   return parsed;
 }

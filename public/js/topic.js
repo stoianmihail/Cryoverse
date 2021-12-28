@@ -2,19 +2,15 @@
 var parsed_url = parse_url(window.location.href);
 document.getElementById('custom-simple-tags').setAttribute('data-simple-tags', parsed_url['tag']);
 
-async function createPost(uid, title, content) {
-  let post = {
-    user:  uid,
-    title: title,
-    content: content
-  };
+async function createPost(args) {
+  console.log(args);
 
   // Get a key for a new invoice.
   let key = firebase.database().ref().child('posts').push().key;
 
   // And update.
   let updates = {};
-  updates['/posts/' + key] = invoiceData;
+  updates['/posts/' + key] = args;
   db.ref().update(updates);
 }
 
@@ -22,27 +18,14 @@ $('#post_button').on('click', (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  let title = $('title').val();
-  let content = $('content').val();
+  let args = {
+    title: $('#title').val(),
+    content: $('#content').val(),
+    tags: document.getElementById('custom-simple-tags').getAttribute('data-simple-tags')
+  };
 
-  console.log(title);
-  console.log(content);
-
-  auth.onAuthStateChanged(firebaseUser => {
-    if (firebaseUser) {
-      db.ref('users').child(firebaseUser.uid).once('value', snapshot => {
-        if (snapshot.exists()) {
-          createPost(firebaseUser.uid, title, content)
-          .then(() => {
-            console.log('finished');
-            // TODO: success
-          });
-        } else {
-          // TODO: error
-        }
-      });
-    } else {
-      // TODO: error
-    }
+  disableScreen();
+  createPost(args).then(() => {
+    enableScreen();
   });
 });
