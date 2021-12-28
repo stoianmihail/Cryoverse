@@ -82,7 +82,7 @@ async function renderThread(id) {
 function registerReply(elem) {
   async function createReply(elem, args) {
     // Fetch the thread id.
-    let thread_id = elem.id.split('_')[1];
+    let thread_id = elem.id.split('.')[1];
     console.log('trhead_id=' + thread_id)
 
     // Set the user.
@@ -102,8 +102,9 @@ function registerReply(elem) {
     content : elem.value,
     timestamp : getTimestamp()
   }).then((ret) => {
+    console.log(ret);
     // Delete the element.
-    deleteElement(document.getElementById(`response_${ret[0]}`));
+    deleteElement(document.getElementById(`response.${ret[0]}`));
 
     // Reset thread.
     renderThread(ret[0]).then(() => {
@@ -118,7 +119,7 @@ function reply(elem) {
   retrieveCurrentUser((args) => {
     let id = args.id;
     $('#thread').append(`
-      <div id='response_${id}' class="card mb-2">
+      <div id='response.${id}' class="card mb-2">
           <div class="card-body">
               <div class="media forum-item">
                   <a href="javascript:void(0)" class="card-link">
@@ -129,7 +130,7 @@ function reply(elem) {
                     <div class="modal-body">
                       <div class="form-group">
                           <div class="textfield-box my-2">
-                              <textarea class="form-control textarea-autosize" id="content_${id}" rows="1" placeholder="Enter response.."></textarea>
+                              <textarea class="form-control textarea-autosize" id="content.${id}" rows="1" placeholder="Enter response.."></textarea>
                           </div><br>
                       </div>
                       <div class="custom-file form-control-sm mt-3" style="max-width: 300px;">
@@ -138,10 +139,10 @@ function reply(elem) {
                       </div>
                     </div>
                     <div class="modal-footer">
-                        <button id='cancel_${id}' type="button" class="btn btn-light" data-dismiss="modal"
-                          onclick='deleteElement(document.getElementById("response_${id}"));'>Cancel</button>
+                        <button id='cancel.${id}' type="button" class="btn btn-light" data-dismiss="modal"
+                          onclick='deleteElement(document.getElementById("response.${id}"));'>Cancel</button>
                         <button type="button" class="btn btn-success" id="post_button"
-                          onclick='registerReply(document.getElementById("content_${id}"));'>Reply</button>
+                          onclick='registerReply(document.getElementById("content.${id}"));'>Reply</button>
                     </div>
                   </div>
               </div>
@@ -184,7 +185,7 @@ function activateToggles() {
 function renderForum() {
   db.ref('posts').once('value', snap => {
     // Sort the snap based on timestamp.
-    items = Object.keys(snap.val()).map(function(key) {
+    items = Object.keys(snap.val() ? snap.val() : {}).map(function(key) {
       return [key, snap.val()[key]];
     }).sort(function(first, second) {
       return second[1].timestamp - first[1].timestamp;
@@ -213,9 +214,7 @@ function renderForum() {
               </a>
               <div class="media-body">
                 <h6><a id='${elem}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
-                <p class="text-secondary">
-                  ${shown_content}
-                </p>
+                <p class="text-secondary">${shown_content}</p>
                 <p class="text-muted"><a href="javascript:void(0)">drewdan</a> replied <span class="text-secondary font-weight-bold">${nl_time}</span></p>
                 ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
               </div>
