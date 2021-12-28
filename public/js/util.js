@@ -11,6 +11,10 @@ function changeWindowLocation(args) {
   window.location = args['location'];
 }
 
+function deleteElement(elem) {
+  elem.parentNode.removeChild(elem);
+}
+
 function tag2color(tag) {
   console.log('inside: ' + tag);
   console.log('inside: ' + (tag === 'temperature'));
@@ -343,7 +347,7 @@ function explainTime(time, suffix) {
   else
     ret = 5;
   let total = Math.round(elapsed / dict[ret].ms);
-  return ((ret >= 3) ? 'approximately' : '') + ' ' + total + ' ' + dict[ret].text + (total > 1 ? 's' : '') + ' ' + suffix;
+  return ((ret >= 3) ? 'approximately' : '') + ' ' + total + ' ' + dict[ret].text + (total !== 1 ? 's' : '') + ' ' + suffix;
 }
 
 // ******************************** L o g i n  U t i l s ********************************
