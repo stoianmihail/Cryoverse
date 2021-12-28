@@ -18,9 +18,13 @@ $('#post_button').on('click', (e) => {
   e.preventDefault();
   e.stopPropagation();
 
+  console.log(getTimestamp());
+  debugger;
+
   let args = {
     title: $('#title').val(),
     content: $('#content').val(),
+    timestamp: getTimestamp(),
     tags: document.getElementById('custom-simple-tags').getAttribute('data-simple-tags')
   };
 

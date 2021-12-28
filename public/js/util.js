@@ -290,6 +290,45 @@ function parse_url(url) {
   return parsed;
 }
 
+// ******************************** T i m e  U t i l s ********************************
+
+function getTimestamp() {
+  return + new Date();
+}
+
+function explainTime(time, suffix) {
+  var msPerMinute = 60 * 1000;
+  var msPerHour = msPerMinute * 60;
+  var msPerDay = msPerHour * 24;
+  var msPerMonth = msPerDay * 30;
+  var msPerYear = msPerDay * 365;
+
+  let dict = {
+    0: {'ms' : 1000, 'text' : 'second'},
+    1: {'ms' : msPerMinute, text : 'minute'},
+    2: {'ms' : msPerHour, text : 'hour'},
+    3: {'ms' : msPerDay, text : 'day'},
+    4: {'ms' : msPerMonth, text : 'month'},
+    5: {'ms' : msPerYear, text : 'year'}
+  };
+
+  var elapsed = getTimestamp() - time;
+  if (elapsed < msPerMinute)
+    ret = 0;
+  else if (elapsed < msPerHour)
+    ret = 1;   
+  else if (elapsed < msPerDay)
+    ret = 2;   
+  else if (elapsed < msPerMonth)
+    ret = 3;   
+  else if (elapsed < msPerYear)
+    ret = 4;   
+  else
+    ret = 5;
+  let total = Math.round(elapsed / dict[ret].ms);
+  return ((ret >= 3) ? 'approximately' : '') + ' ' + total + ' ' + dict[ret].text + (total > 1 ? 's' : '') + ' ' + suffix;
+}
+
 // ******************************** L o g i n  U t i l s ********************************
 var hasIssuedSignOut = false;
 $('#close-button').on('click', e => {
