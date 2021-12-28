@@ -3,14 +3,14 @@ const ACCOUNTING_COMPANY = 1;
 // The current user.
 var current_user = { 'uid' : undefined, 'company' : undefined, 'type' : undefined};
 
-auth.onAuthStateChanged(firebaseUser => {
-  if (firebaseUser) {
-    console.log("Logged in!");
-    console.log('uid=' + firebaseUser.uid);
-  } else {
-    console.log("Not logged in!");
-  }
-});
+// auth.onAuthStateChanged(firebaseUser => {
+//   if (firebaseUser) {
+//     console.log("Logged in!");
+//     console.log('uid=' + firebaseUser.uid);
+//   } else {
+//     console.log("Not logged in!");
+//   }
+// });
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

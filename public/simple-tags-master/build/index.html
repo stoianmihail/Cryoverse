@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="author" content="Kurt Obando">
+	<meta name="description" content="A lightweight JS plugin for tags without JQuery library">
+	<meta name="keywords" content="JS Tags plugin">
+	<title>A lightweight JS plugin for tags</title>
+	
+	<!-- UIkit CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.2/dist/css/uikit.min.css" />
+	<link rel="stylesheet" href="./simple-tags.min.css">
+</head>
+<body> 
+	<div class="uk-background-primary uk-light uk-padding uk-panel">
+		<div class="uk-height-small"></div>
+		<div class="uk-container uk-container-small">
+           	<h1>Simple Tags</h1>
+			<p>A lightweight JS plugin for tags without JQuery library</p>
+			
+			<div>
+				<a class="uk-button uk-button-primary" href="https://github.com/kurtobando/simple-tags" target="_blank">Download</a>
+				<a class="uk-button uk-button-default" href="https://github.com/kurtobando/simple-tags" target="_blank" uk-icon="github"></a>
+			</div>
+        </div>
+	</div>
+	
+	
+	
+	<div class="uk-container uk-container-small uk-padding">
+		<div class="uk-margin-top">
+			<h3>Getting Started</h3>
+			<p>Start by adding the <code>data-simple-tags</code> data attribute with your desired values, for example  <code>Article, Blog, Page, Post, Category, Updates</code> then, include <code>.simple-tags</code> for the default style.</p>
+		</div>
+		<div>
+			<pre style="tab-size: 1; white-space: pre-line;">
+				&lt;div
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class="simple-tags"
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data-simple-tags="Article, Blog, Page, Post, Category, Updates" &gt;
+				&lt;/div&gt;
+			</pre>
+			<p></p>
+		</div>
+	
+		<div>
+			<p><span class="uk-label">Note</span> Ensure these files are included on your project.</p>
+			<pre style="tab-size: 1; white-space: pre-line;">
+				&lt;link href="build/simple-tags.min.css" rel="stylesheet"&gt;
+				&lt;script src="build/simple-tags.min.js"&gt;&lt;&#47;script&gt;
+			</pre>
+		</div>
+
+		<div>
+			At this point, let us target the desired element and pass to <code>new Tags()</code>. 
+			In our example above, I will add a new id attribute, named <code>simple-tag</code>.
+			 
+			<pre style="tab-size: 1; white-space: pre-line;">
+				&lt;div
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id="simple-tag"
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class="simple-tags"
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data-simple-tags="Article, Blog, Page, Post, Category, Updates" &gt;
+				&lt;/div&gt;
+			</pre>
+			
+			<pre style="tab-size: 1; white-space: pre-line;">
+				&lt;script src="build/simple-tags.min.js"&gt;&lt;&#47;script&gt;
+				&lt;script&gt;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new Tags(document.getElementById("simple-tag"))
+				&lt;/script&gt;
+			</pre>	
+		</div>
+		
+		<div class="uk-margin-top">
+			<h3>Result</h3>
+			<div id="custom-simple-tags" 
+			class="simple-tags"
+				 data-simple-tags="Article, Blog, Page, Post, Category, Updates" 
+				 style="margin: 1em 0em;">
+			</div>
+		</div>
+		
+		<div class="uk-height-medium"></div>
+	</div>
+
+	<script src="simple-tags.min.js"></script>
+	
+	<!-- UIkit JS -->
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.2.2/dist/js/uikit.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.2.2/dist/js/uikit-icons.min.js"></script>
+</body>
+</html>
