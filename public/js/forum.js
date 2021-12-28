@@ -53,7 +53,7 @@ async function renderThread(id) {
   items = Object.keys(dict.responses ? dict.responses : {}).map(function(key) {
     return [key, dict.responses[key]];
   }).sort(function(first, second) {
-    return second[1].timestamp - first[1].timestamp;
+    return -(second[1].timestamp - first[1].timestamp);
   });
 
   for ([key, response] of items) {
@@ -125,7 +125,7 @@ function reply(elem) {
                       <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
                       <small class="d-block text-center text-muted"></small>
                   </a>
-                  <div class="container">
+                  <div class="container no-gutters">
                     <div class="modal-body">
                       <div class="form-group">
                           <div class="textfield-box my-2">
