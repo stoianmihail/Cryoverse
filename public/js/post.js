@@ -1,9 +1,16 @@
 // Set the tag from the parsed url.
 var parsed_url = parse_url(window.location.href);
-document.getElementById('custom-simple-tags').setAttribute('data-simple-tags', parsed_url['tag']);
+
+// Prefill the tags.
+if ('tag' in parsed_url) {
+  document.getElementById('custom-simple-tags').setAttribute('data-simple-tags', parsed_url['tag']);
+} else {
+  document.getElementById('custom-simple-tags').setAttribute('data-simple-tags', '');
+}
 
 async function createPost(args) {
-  console.log(args);
+  // Set the user.
+  args['user'] = current_user.username;
 
   // Get a key for a new invoice.
   let key = firebase.database().ref().child('posts').push().key;
@@ -11,15 +18,23 @@ async function createPost(args) {
   // And update.
   let updates = {};
   updates['/posts/' + key] = args;
-  db.ref().update(updates);
+  return [args.tags, db.ref().update(updates)];
 }
 
+// Retrieve the user.
+disableScreen();
+retrieveCurrentUser(() => {}, {}, window.location.href, () => {
+  // Enable the screen.
+  enableScreen();
+
+  // Use the fresh tags.
+  window.location = 'forum.html' + (ret[0] === '' ? '' : '?tag=' + ret[0]); 
+});
+
 $('#post_button').on('click', (e) => {
+  // At this point we're sure that we have an active user.
   e.preventDefault();
   e.stopPropagation();
-
-  console.log(getTimestamp());
-  debugger;
 
   let args = {
     title: $('#title').val(),
@@ -29,7 +44,8 @@ $('#post_button').on('click', (e) => {
   };
 
   disableScreen();
-  createPost(args).then(() => {
+  createPost(args).then((ret) => {
     enableScreen();
+    window.location = 'forum.html' + (ret[0] === '' ? '' : '?tag=' + ret[0]); 
   });
 });

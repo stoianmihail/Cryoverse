@@ -11,8 +11,26 @@ function changeWindowLocation(args) {
   window.location = args['location'];
 }
 
+function tag2color(tag) {
+  console.log('inside: ' + tag);
+  console.log('inside: ' + (tag === 'temperature'));
+  if (tag.startsWith('temp')) {
+    return '#4adede';
+  } else if (tag.startsWith('magnet')) {
+    return '#a6a6a6';
+  } else if (tag === 'vibrations') {
+    return 'pink';
+  } else if (tag === 'sample') {
+    return '#e1cbb1';
+  } else {
+    return 'yellow';
+  }
+}
+
 // Fetch the user.
-function retrieveCurrentUser(callback, args, page, askUserForLogin=false, valid=true) {  
+function retrieveCurrentUser(callback, args, page, callfront, askUserForLogin=true, valid=true) {  
+  console.log('inseddsasasdadsad');
+
   auth.onAuthStateChanged(firebaseUser => {
     console.log(firebaseUser);
     // Do we still have an user?
@@ -23,12 +41,11 @@ function retrieveCurrentUser(callback, args, page, askUserForLogin=false, valid=
       
       db.ref('users').child(firebaseUser.uid).once('value', snapshot => {
         if (snapshot.exists()) {
-          current_user = { uid : firebaseUser.uid, username : snapshot.val().username };
-          args['user'] = current_user.uid;
-          
+          console.log(snapshot.val());
+          current_user = { uid : firebaseUser.uid, username : snapshot.val().username };          
           if (callback[Symbol.toStringTag] === 'AsyncFunction') {
             callback(args).then(() => {
-              enableScreen();
+              callfront();
             });
           } else {
             callback(args);
