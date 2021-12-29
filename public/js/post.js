@@ -10,7 +10,7 @@ if ('tag' in parsed_url) {
 
 async function createPost(args) {
   // Set the user.
-  args['uid'] = current_user.uid;
+  args['user'] = current_user;
 
   // Get a key for a new invoice.
   let key = firebase.database().ref().child('posts').push().key;

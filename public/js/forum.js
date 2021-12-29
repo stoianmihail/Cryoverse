@@ -228,10 +228,12 @@ function renderForum() {
 
         let add_info = '';
         if (dict.responses) {
+          console.log(dict.responses);
           let last_reply = get_last_reply(dict.responses);
-          add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+          console.log(last_reply);
+          add_info = `<p id='status.${elem.id}' class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
-          add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+          add_info = `<p id='status.${elem.id}' class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
         forum.push(`
@@ -276,6 +278,21 @@ function renderForum() {
       // Build the forum.
       $('#forum').html(forum.join('\n'));
   
+      for (elem of ret) {
+        db.ref(`/posts/${elem.id}`).child('responses').on('value', snap => {
+          if (!snap.exists()) return;
+          let add_info = '';
+          if (snap.val().responses) {
+            console.log(snap.val().responses);
+            let last_reply = get_last_reply(snap.val().responses);
+            console.log(last_reply);
+            add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+          } else {
+            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+          }
+        }
+      }
+
       // Activate toggles.
       activateToggles();
     });
