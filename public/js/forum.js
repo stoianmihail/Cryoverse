@@ -11,8 +11,12 @@ $('#new-discussion_button').on('click', (e) => {
 });
 
 async function renderThread(thread_id) {
+  // Init the thread.
+  $('#thread').html('');
+
+  // Fetch the profile.
   const snap = await db.ref(`posts/${thread_id}`).once('value');
-  fetchProfile(thread_id, snap.val()).then((ret) => {
+  fetchProfile(thread_id, snap.val(), isThread=true).then((ret) => {
     let dict = ret.snap;
     let nl_time = explainTime(dict.timestamp, 'ago');
     let tagsWithColors = [];
@@ -49,34 +53,36 @@ async function renderThread(thread_id) {
         </div>
     </div>`);
 
-    // Sort the responses based on timestamp.
-    items = Object.keys(dict.responses ? dict.responses : {}).map(function(key) {
-      return [key, dict.responses[key]];
-    }).sort(function(first, second) {
-      return -(second[1].timestamp - first[1].timestamp);
-    });
+    // And then the profile of the users within the responses.
+    Promise.all(Object.keys(dict.responses ? dict.responses : {}).map(key => fetchProfile(key, dict.responses[key], isThread=false)))
+    .then((ret) => {
+      ret.sort(function(first, second) {
+        return -(second.snap.timestamp - first.snap.timestamp);
+      });
 
-    for ([key, response] of items) {
-      let local_time = explainTime(response.timestamp, 'ago');
-      $(`#thread`).append(`
-        <div class="card mb-2">
-          <div class="card-body">
+      for (elem of ret) {
+        let response = elem.snap;
+        let local_time = explainTime(response.timestamp, 'ago');
+        $(`#thread`).append(`
+          <div class="card mb-2">
+            <div class="card-body">
               <div class="media forum-item">
-                  <a href="javascript:void(0)" class="card-link">
-                      <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
-                      <small class="d-block text-center text-muted"></small>
-                  </a>
-                  <div class="media-body ml-3">
-                      <a href="javascript:void(0)" class="text-secondary">${response.user}</a>
-                      <small class="text-muted ml-2">${local_time}</small>
-                      <div class="mt-3 font-size-sm">
-                          <p>${text2html(response.content)}</p>
-                      </div>
+                <a href="javascript:void(0)" class="card-link">
+                  <img src="${elem.url}" class="rounded-circle" width="50" alt="User" />
+                  <small class="d-block text-center text-muted"></small>
+                </a>
+                <div class="media-body ml-3">
+                  <a href="javascript:void(0)" class="text-secondary">${elem.user.username}</a>
+                  <small class="text-muted ml-2">${local_time}</small>
+                  <div class="mt-3 font-size-sm">
+                    <p>${text2html(response.content)}</p>
                   </div>
+                </div>
               </div>
-          </div>
-      </div>`)
-    }
+            </div>
+          </div>`);
+      }
+    });
   });
 }
 
@@ -87,8 +93,8 @@ function registerReply(elem) {
     console.log('trhead_id=' + thread_id)
 
     // Set the user.
-    args['user'] = current_user.username;
-  
+    args['user'] = current_user;
+
     // Get a key for a new invoice.
     let key = db.ref(`posts/${thread_id}`).child('responses').push().key;
   
@@ -201,20 +207,10 @@ function renderForum() {
   }
 
   db.ref('posts').once('value', snap => {
-    // // Sort the snap based on timestamp.
-    // items = Object.keys(snap.val() ? snap.val() : {}).map(function(key) {
-    //   return [key, snap.val()[key]];
-    // }).sort(function(first, second) {
-    //   return second[1].timestamp - first[1].timestamp;
-    // });
-    console.log(snap.val());
-    console.log(Object.keys(snap.val() ? snap.val() : {}));
-
-
-    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val()[key])))
+    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val()[key], isThread=true)))
     .then((ret) => {
       ret.sort(function(first, second) {
-        return second[1].snap.timestamp - first[1].snap.timestamp;
+        return second.snap.timestamp - first.snap.timestamp;
       });
 
       forum = [];
@@ -233,7 +229,7 @@ function renderForum() {
         let add_info = '';
         if (dict.responses) {
           let last_reply = get_last_reply(dict.responses);
-          add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }

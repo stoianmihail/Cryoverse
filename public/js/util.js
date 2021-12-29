@@ -102,14 +102,15 @@ function prettify(invoiceName) {
   return invoiceName.slice(getPosition(invoiceName, '_', 2) + 1, invoiceName.length);
 }
 
-async function fetchProfile(thread_id, snap) {
-  const user_snap = await db.ref('users').child(snap.uid).once('value');
-  
+async function fetchProfile(id, snap, isThread=false) {
+  let uid = isThread ? snap.uid : snap.user.uid;
+  const user_snap = await db.ref('users').child(uid).once('value');
+
   // TODO: throw error
   if (!user_snap.exists()) return undefined;
 
-  profile = await storage.ref('profiles').child(snap.uid).getDownloadURL();
-  return {'id' : thread_id, 'snap' : snap, 'user' : user_snap.val(), 'url' : profile};
+  profile = await storage.ref('profiles').child(uid).getDownloadURL();
+  return {'id' : id, 'snap' : snap, 'user' : user_snap.val(), 'url' : profile};
 }
 
 function exportData(folderName, target_uid, target_company) {
