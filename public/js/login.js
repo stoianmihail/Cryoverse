@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   var login_button = document.getElementById("login-button");
   var register_button = document.getElementById("register-button");
   var username = null;
+  var email_md5 = null;
 
   function getAttributes(type) {
     var dict = {}
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       promise.catch(e => console.log(e.message));
     } else if (type === "register") {
       username = attr["username"];
+      email_md5 = md5(attr["email"]);
       const promise = auth.createUserWithEmailAndPassword(attr["email"], attr["password"]);
       promise.then(() => {
         console.log("finished?");
@@ -92,6 +94,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   }
 
+  function getFileBlob(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+    xhr.addEventListener('load', function() {
+      cb(xhr.response);
+    });
+    xhr.send();
+  }
+
   function register(uid) {
     db.ref('users').child(uid).once("value", snapshot => {
       if (snapshot.exists()) {
@@ -103,6 +115,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
           // Unreachable (if the app works correctly)
           console.log("No username found!");
         } else {
+          let url = 'http://www.gravatar.com/avatar/' + email_md5 + '?d=identicon';
+          console.log(url);
+          uploadToStorage = (imageURL) => {
+            getFileBlob(imageURL, blob => {
+              firebase.storage().ref('/profiles/' + uid).put(blob).then(function(snapshot) {
+                db.ref('users').child(uid).set({
+                  username: username,
+                }).then(() => {
+                  accessForum(uid, username);
+                }).catch(err => {
+                  // TODO: inform user
+                  console.error(err);
+                });
+              });
+            });
+          }
+
+          uploadToStorage(url);
+/*
+          return storage.ref('profiles').child(uid).put(file, { contentType: file.type });
+
+
           db.ref('users').child(uid).set({
             username: username,
 					}).then(() => {
@@ -110,7 +144,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }).catch(err => {
             // TODO: inform user
             console.error(err);
-          });
+          });*/
         }
       }
     });

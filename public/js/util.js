@@ -102,18 +102,14 @@ function prettify(invoiceName) {
   return invoiceName.slice(getPosition(invoiceName, '_', 2) + 1, invoiceName.length);
 }
 
-async function fetchInvoice(invoiceId, withUrl) {
-  const snap = await db.ref('invoices').child(invoiceId).once('value');
+async function fetchProfile(thread_id, snap) {
+  const user_snap = await db.ref('users').child(snap.uid).once('value');
   
-  // TODO: throw error 
-  if (!snap.exists()) return undefined;
+  // TODO: throw error
+  if (!user_snap.exists()) return undefined;
 
-  // Should we also fetch the url?
-  if (withUrl) {
-    url = await storage.ref('invoices').child(snap.val().invoice).getDownloadURL();
-    return {'id' : invoiceId, 'name' : prettify(snap.val().invoice), 'url' : url, 'snap' : snap.val()};
-  }
-  return {'id' : invoiceId, 'name' : prettify(snap.val().invoice), 'snap' : snap.val()};
+  profile = await storage.ref('profiles').child(snap.uid).getDownloadURL();
+  return {'id' : thread_id, 'snap' : snap, 'user' : user_snap.val(), 'url' : profile};
 }
 
 function exportData(folderName, target_uid, target_company) {

@@ -10,73 +10,74 @@ $('#new-discussion_button').on('click', (e) => {
   retrieveCurrentUser(changeWindowLocation, {'location' : future_location}, future_location, () => enableScreen());
 });
 
-  
-async function renderThread(id) {
-  const snap = await db.ref(`posts/${id}`).once('value');
-  let dict = snap.val();
-  let nl_time = explainTime(dict.timestamp, 'ago');
-  let tagsWithColors = [];
-  if (dict.tags.length) {
-    for (tag of dict.tags.split(',')) {
-      tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
+async function renderThread(thread_id) {
+  const snap = await db.ref(`posts/${thread_id}`).once('value');
+  fetchProfile(thread_id, snap.val()).then((ret) => {
+    let dict = ret.snap;
+    let nl_time = explainTime(dict.timestamp, 'ago');
+    let tagsWithColors = [];
+    if (dict.tags.length) {
+      for (tag of dict.tags.split(',')) {
+        tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
+      }
     }
-  }
 
-  let num_stars = Math.floor(Math.random() * 500);
-  $('#thread').html(`
-    <div class="card mb-2">
-      <div class="card-body">
-          <div class="media forum-item">
-              <a href="javascript:void(0)" class="card-link">
-                  <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
-                  <small class="d-block text-center text-muted"></small>
-              </a>
-              <div class="media-body ml-3">
-                  <a href="javascript:void(0)" class="text-secondary">${dict.user}</a>
-                  <small class="text-muted ml-2">${nl_time}</small>
-                  <h5 class="mt-1">${dict.title}</h5>
-                  <div class="mt-3 font-size-sm">
-                      <p>${text2html(dict.content)}</p>
-                  </div>
-                  ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
-                  <p>Actions: <button class="btn-sm btn far fa-star"> Star (${num_stars})</button><button class="btn-sm btn far fa-bookmark"> Bookmark</button><button id='${id}' class="btn-sm btn fa fa-reply" onclick='reply(this);'> Reply</button></p>
-              </div>
-              <div class="text-muted small text-center">
-                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
-                  <span><i class="far fa-comment ml-2"></i> 3</span>
-              </div>
-          </div>
-      </div>
-  </div>`);
-
-  // Sort the responses based on timestamp.
-  items = Object.keys(dict.responses ? dict.responses : {}).map(function(key) {
-    return [key, dict.responses[key]];
-  }).sort(function(first, second) {
-    return -(second[1].timestamp - first[1].timestamp);
-  });
-
-  for ([key, response] of items) {
-    let local_time = explainTime(response.timestamp, 'ago');
-    $(`#thread`).append(`
+    let num_stars = Math.floor(Math.random() * 500);
+    $('#thread').html(`
       <div class="card mb-2">
         <div class="card-body">
             <div class="media forum-item">
                 <a href="javascript:void(0)" class="card-link">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
+                    <img src="${ret.url}" class="rounded-circle" width="50" alt="User" />
                     <small class="d-block text-center text-muted"></small>
                 </a>
                 <div class="media-body ml-3">
-                    <a href="javascript:void(0)" class="text-secondary">${response.user}</a>
-                    <small class="text-muted ml-2">${local_time}</small>
+                    <a href="javascript:void(0)" class="text-secondary">${elem.user.username}</a>
+                    <small class="text-muted ml-2">${nl_time}</small>
+                    <h5 class="mt-1">${dict.title}</h5>
                     <div class="mt-3 font-size-sm">
-                        <p>${text2html(response.content)}</p>
+                        <p>${text2html(dict.content)}</p>
                     </div>
+                    ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                    <p>Actions: <button class="btn-sm btn far fa-star"> Star (${num_stars})</button><button class="btn-sm btn far fa-bookmark"> Bookmark</button><button id='${thread_id}' class="btn-sm btn fa fa-reply" onclick='reply(this);'> Reply</button></p>
+                </div>
+                <div class="text-muted small text-center">
+                    <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
+                    <span><i class="far fa-comment ml-2"></i> 3</span>
                 </div>
             </div>
         </div>
-    </div>`)
-  }
+    </div>`);
+
+    // Sort the responses based on timestamp.
+    items = Object.keys(dict.responses ? dict.responses : {}).map(function(key) {
+      return [key, dict.responses[key]];
+    }).sort(function(first, second) {
+      return -(second[1].timestamp - first[1].timestamp);
+    });
+
+    for ([key, response] of items) {
+      let local_time = explainTime(response.timestamp, 'ago');
+      $(`#thread`).append(`
+        <div class="card mb-2">
+          <div class="card-body">
+              <div class="media forum-item">
+                  <a href="javascript:void(0)" class="card-link">
+                      <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
+                      <small class="d-block text-center text-muted"></small>
+                  </a>
+                  <div class="media-body ml-3">
+                      <a href="javascript:void(0)" class="text-secondary">${response.user}</a>
+                      <small class="text-muted ml-2">${local_time}</small>
+                      <div class="mt-3 font-size-sm">
+                          <p>${text2html(response.content)}</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>`)
+    }
+  });
 }
 
 function registerReply(elem) {
@@ -116,14 +117,16 @@ function registerReply(elem) {
 function reply(elem) {
   // Retrieve the user.
   disableScreen();
-  retrieveCurrentUser((args) => {
+  retrieveCurrentUser(async (args) => {
     let id = args.id;
+    const url = await storage.ref('profiles').child(current_user.uid).getDownloadURL();
+  
     $('#thread').append(`
       <div id='response.${id}' class="card mb-2">
           <div class="card-body">
               <div class="media forum-item">
                   <a href="javascript:void(0)" class="card-link">
-                      <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
+                      <img src="${url}" class="rounded-circle" width="50" alt="User" />
                       <small class="d-block text-center text-muted"></small>
                   </a>
                   <div class="container no-gutters">
@@ -183,66 +186,103 @@ function activateToggles() {
 }
 
 function renderForum() {
-  db.ref('posts').once('value', snap => {
-    // Sort the snap based on timestamp.
-    items = Object.keys(snap.val() ? snap.val() : {}).map(function(key) {
-      return [key, snap.val()[key]];
-    }).sort(function(first, second) {
-      return second[1].timestamp - first[1].timestamp;
-    });
-
-    forum = [];
-    for ([elem, dict] of items) {
-      let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
-      let num_eyes = Math.floor(Math.random() * 1000);
-      let nl_time = explainTime(dict.timestamp, 'ago');
-
-      let tagsWithColors = [];
-      if (dict.tags.length) {
-        for (tag of dict.tags.split(',')) {
-          tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
-        }
+  function get_last_reply(responses) {
+    if (!responses)
+      return undefined;
+    let max = -1;
+    let best = undefined;
+    for (id in responses) {
+      if (responses[id].timestamp > max) {
+        max = responses[id].timestamp;
+        best = id;
       }
+    }
+    return responses[best];
+  }
 
-      forum.push(`
-        <div class="card mb-2">
-          <div class="card-body p-2 p-sm-3">
-            <div class="media forum-item">
-              <a href="javascript:void(0)" class="card-link">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="50" alt="User" />
-                <small class="d-block text-center text-muted">${dict.user}</small>
-              </a>
-              <div class="media-body">
-                <h6><a id='${elem}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
-                <p class="text-secondary">${shown_content}</p>
-                <p class="text-muted"><a href="javascript:void(0)">drewdan</a> replied <span class="text-secondary font-weight-bold">${nl_time}</span></p>
-                ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
-              </div>
-              <div class="text-muted small text-center align-self-center">
-                <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
-                <span><i class="far fa-comment ml-2"></i> 3</span>
+  db.ref('posts').once('value', snap => {
+    // // Sort the snap based on timestamp.
+    // items = Object.keys(snap.val() ? snap.val() : {}).map(function(key) {
+    //   return [key, snap.val()[key]];
+    // }).sort(function(first, second) {
+    //   return second[1].timestamp - first[1].timestamp;
+    // });
+    console.log(snap.val());
+    console.log(Object.keys(snap.val() ? snap.val() : {}));
+
+
+    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val()[key])))
+    .then((ret) => {
+      ret.sort(function(first, second) {
+        return second[1].snap.timestamp - first[1].snap.timestamp;
+      });
+
+      forum = [];
+      for (elem of ret) {
+        let dict = elem.snap;
+        let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
+        let num_eyes = Math.floor(Math.random() * 1000);
+
+        let tagsWithColors = [];
+        if (dict.tags.length) {
+          for (tag of dict.tags.split(',')) {
+            tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
+          }
+        }
+
+        let add_info = '';
+        if (dict.responses) {
+          let last_reply = get_last_reply(dict.responses);
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+        } else {
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+        }
+
+        forum.push(`
+          <div class="card mb-2">
+            <div class="card-body p-2 p-sm-3">
+              <div class="media forum-item">
+                <a href="javascript:void(0)" class="card-link">
+                  <center>
+                    <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
+                  </center>
+                  <small class="d-block text-center text-muted">${elem.user.username}</small>
+                </a>
+                <div class="media-body">
+                  <h6><a id='${elem.id}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
+                  <p class="text-secondary">${shown_content}</p>
+                  ${add_info}
+                  ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                </div>
+                <div class="text-muted small text-center align-self-center">
+                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
+                  <span><i class="far fa-comment ml-2"></i> 3</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>`);
-    }
+          </div>`);
+      }
 
-    forum.push(`
-      <ul class="pagination pagination-sm pagination-circle justify-content-center mb-0">
-        <li class="page-item disabled">
-          <span class="page-link has-icon"><i class="material-icons">chevron_left</i></span>
-        </li>
-        <li class="page-item"><a class="page-link" href="javascript:void(0)">1</a></li>
-        <li class="page-item active"><span class="page-link">2</span></li>
-        <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
-        <li class="page-item">
-          <a class="page-link has-icon" href="javascript:void(0)"><i class="material-icons">chevron_right</i></a>
-        </li>
-      </ul>`);
+      // Add arrows.
+      forum.push(`
+        <ul class="pagination pagination-sm pagination-circle justify-content-center mb-0">
+          <li class="page-item disabled">
+            <span class="page-link has-icon"><i class="material-icons">chevron_left</i></span>
+          </li>
+          <li class="page-item"><a class="page-link" href="javascript:void(0)">1</a></li>
+          <li class="page-item active"><span class="page-link">2</span></li>
+          <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
+          <li class="page-item">
+            <a class="page-link has-icon" href="javascript:void(0)"><i class="material-icons">chevron_right</i></a>
+          </li>
+        </ul>`);
 
-    $('#forum').html(forum.join('\n'));
-
-    activateToggles();
+      // Build the forum.
+      $('#forum').html(forum.join('\n'));
+  
+      // Activate toggles.
+      activateToggles();
+    });
   });
 }
 
