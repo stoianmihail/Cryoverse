@@ -26,6 +26,8 @@ async function renderThread(thread_id) {
       }
     }
 
+    console.log(ret.snap);
+
     let num_stars = Math.floor(Math.random() * 500);
     $('#thread').html(`
       <div class="card mb-2">
@@ -36,7 +38,7 @@ async function renderThread(thread_id) {
                     <small class="d-block text-center text-muted"></small>
                 </a>
                 <div class="media-body ml-3">
-                    <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
+                    <a href="javascript:void(0)" class="text-secondary">${ret.snap.user.username}</a>
                     <small class="text-muted ml-2">${nl_time}</small>
                     <h5 class="mt-1">${dict.title}</h5>
                     <div class="mt-3 font-size-sm">
@@ -72,7 +74,7 @@ async function renderThread(thread_id) {
                   <small class="d-block text-center text-muted"></small>
                 </a>
                 <div class="media-body ml-3">
-                  <a href="javascript:void(0)" class="text-secondary">${elem.user.username}</a>
+                  <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <small class="text-muted ml-2">${local_time}</small>
                   <div class="mt-3 font-size-sm">
                     <p>${text2html(response.content)}</p>
@@ -237,6 +239,8 @@ function renderForum() {
           console.log(last_reply);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
+          console.log(`whatt??????`);
+          console.log(elem.snap.user);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
@@ -295,7 +299,7 @@ function renderForum() {
             let last_reply = get_last_reply(snap.val().responses);
             add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
           } else {
-            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
+            add_info = `<p class="text-muted"><a href="javascript:void(0)">${snap.val().user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
           }
 
           // And reset the html.
