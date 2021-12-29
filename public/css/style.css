@@ -52,17 +52,19 @@ ol, ul {
 .big_gallery {
   position: relative;
   margin-top: 7.5%;
+  max-width: 100%;
 }
 .small_gallery {
   position: fixed;
   left: 30%;
   top: 3.75%;
   z-index: 100;
+  font-size: 0px;
   -ms-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  max-width: 250px;
+  max-width: 15%;
 }
 .show {
 	-webkit-box-flex: auto;
