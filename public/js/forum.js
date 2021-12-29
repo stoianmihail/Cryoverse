@@ -16,7 +16,7 @@ async function renderThread(thread_id) {
 
   // Fetch the profile.
   const snap = await db.ref(`posts/${thread_id}`).once('value');
-  fetchProfile(thread_id, snap.val(), isThread=true).then((ret) => {
+  fetchProfile(thread_id, snap.val()).then((ret) => {
     let dict = ret.snap;
     let nl_time = explainTime(dict.timestamp, 'ago');
     let tagsWithColors = [];
@@ -36,7 +36,7 @@ async function renderThread(thread_id) {
                     <small class="d-block text-center text-muted"></small>
                 </a>
                 <div class="media-body ml-3">
-                    <a href="javascript:void(0)" class="text-secondary">${elem.user.username}</a>
+                    <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                     <small class="text-muted ml-2">${nl_time}</small>
                     <h5 class="mt-1">${dict.title}</h5>
                     <div class="mt-3 font-size-sm">
@@ -54,7 +54,7 @@ async function renderThread(thread_id) {
     </div>`);
 
     // And then the profile of the users within the responses.
-    Promise.all(Object.keys(dict.responses ? dict.responses : {}).map(key => fetchProfile(key, dict.responses[key], isThread=false)))
+    Promise.all(Object.keys(dict.responses ? dict.responses : {}).map(key => fetchProfile(key, dict.responses[key])))
     .then((ret) => {
       ret.sort(function(first, second) {
         return -(second.snap.timestamp - first.snap.timestamp);
@@ -207,14 +207,18 @@ function renderForum() {
   }
 
   db.ref('posts').once('value', snap => {
-    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val()[key], isThread=true)))
+    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val()[key])))
     .then((ret) => {
       ret.sort(function(first, second) {
         return second.snap.timestamp - first.snap.timestamp;
       });
 
+      console.log(ret);
+
       forum = [];
       for (elem of ret) {
+        console.log('elem=');
+        console.log(elem);
         let dict = elem.snap;
         let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
         let num_eyes = Math.floor(Math.random() * 1000);
@@ -233,7 +237,7 @@ function renderForum() {
           console.log(last_reply);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
-          add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
         forum.push(`
@@ -244,7 +248,7 @@ function renderForum() {
                   <center>
                     <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   </center>
-                  <small class="d-block text-center text-muted">${elem.user.username}</small>
+                  <small class="d-block text-center text-muted">${elem.snap.user.username}</small>
                 </a>
                 <div class="media-body">
                   <h6><a id='${elem.id}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
@@ -283,13 +287,15 @@ function renderForum() {
           // No snap?
           if (!snap.exists()) return;
 
+          console.log('[refresh] snap=' + snap.val());
+
           // Refresh the status.
           let add_info = '';
           if (snap.val().responses) {
             let last_reply = get_last_reply(snap.val().responses);
             add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
           } else {
-            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
+            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
           }
 
           // And reset the html.
