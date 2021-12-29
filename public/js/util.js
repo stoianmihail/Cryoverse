@@ -102,15 +102,10 @@ function prettify(invoiceName) {
   return invoiceName.slice(getPosition(invoiceName, '_', 2) + 1, invoiceName.length);
 }
 
-async function fetchProfile(id, snap, isThread=false) {
-  let uid = isThread ? snap.uid : snap.user.uid;
-  const user_snap = await db.ref('users').child(uid).once('value');
-
-  // TODO: throw error
-  if (!user_snap.exists()) return undefined;
-
+async function fetchProfile(id, snap) {
+  let uid = snap.user.uid;
   profile = await storage.ref('profiles').child(uid).getDownloadURL();
-  return {'id' : id, 'snap' : snap, 'user' : user_snap.val(), 'url' : profile};
+  return {'id' : id, 'snap' : snap, 'url' : profile};
 }
 
 function exportData(folderName, target_uid, target_company) {
@@ -350,6 +345,8 @@ function explainTime(time, suffix) {
   else
     ret = 5;
   let total = Math.round(elapsed / dict[ret].ms);
+  if ((ret == 0) && (total === 0))
+    return 'a moment' + ' ' + suffix;
   return ((ret >= 3) ? 'approximately' : '') + ' ' + total + ' ' + dict[ret].text + (total !== 1 ? 's' : '') + ' ' + suffix;
 }
 

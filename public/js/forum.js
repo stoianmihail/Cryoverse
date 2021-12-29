@@ -231,9 +231,9 @@ function renderForum() {
           console.log(dict.responses);
           let last_reply = get_last_reply(dict.responses);
           console.log(last_reply);
-          add_info = `<p id='status.${elem.id}' class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
-          add_info = `<p id='status.${elem.id}' class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+          add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
         forum.push(`
@@ -249,7 +249,7 @@ function renderForum() {
                 <div class="media-body">
                   <h6><a id='${elem.id}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
                   <p class="text-secondary">${shown_content}</p>
-                  ${add_info}
+                  <div id='status.${elem.id}'>${add_info}</div>
                   ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
                 </div>
                 <div class="text-muted small text-center align-self-center">
@@ -279,18 +279,22 @@ function renderForum() {
       $('#forum').html(forum.join('\n'));
   
       for (elem of ret) {
-        db.ref(`/posts/${elem.id}`).child('responses').on('value', snap => {
+        db.ref('posts').child(elem.id).on('value', snap => {
+          // No snap?
           if (!snap.exists()) return;
+
+          // Refresh the status.
           let add_info = '';
           if (snap.val().responses) {
-            console.log(snap.val().responses);
             let last_reply = get_last_reply(snap.val().responses);
-            console.log(last_reply);
             add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
           } else {
-            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
+            add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
           }
-        }
+
+          // And reset the html.
+          document.getElementById(`status.${snap.key}`).innerHTML = add_info;
+        });
       }
 
       // Activate toggles.
