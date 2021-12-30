@@ -2,7 +2,6 @@ body{
     margin-top: 65px;
     color: #1a202c;
     text-align: left;
-    overflow: hidden;
 }
 .inner-wrapper {
     position: relative;
@@ -77,7 +76,6 @@ body{
         left: 0;
     }
     .inner-expand .main-body {
-        overflow: hidden;
     }
     .inner-expand .inner-wrapper {
         transform: translate3d(235px, 0, 0);
@@ -132,7 +130,6 @@ textarea.textarea-autosize {
     height: 2.25rem;
     min-height: 2.25rem;
     resize: none;
-    overflow-y:hidden;
 }
 
 textarea.textarea-autosize.form-control-lg {

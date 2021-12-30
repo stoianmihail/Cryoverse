@@ -98,43 +98,34 @@
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
-<div class="main-body p-0">
-  <div class="inner-wrapper">
-    <div class="inner-main">
-      <div class="content">
-        <div id="forum" class="inner-main-body p-2 p-sm-3 collapse forum-content show">
-          <div class="card mb-2">
-            <div class="card-body p-2 p-sm-3">
-              <div class="media forum-item">
-                <a id='test1' href="#" data-toggle="collapse" data-target=".forum-content"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="mr-3 rounded-circle" width="50" alt="User" /></a>
-                <div class="media-body">
-                  <h6><a id='test2' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">Realtime fetching data</a></h6>
-                  <p class="text-secondary">
-                    lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-                  </p>
-                  <p class="text-muted"><a href="javascript:void(0)">drewdan</a> replied <span class="text-secondary font-weight-bold">13 minutes ago</span></p>
-                </div>
-                <div class="text-muted small text-center align-self-center">
-                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
-                  <span><i class="far fa-comment ml-2"></i> 3</span>
-                </div>
-              </div>
-            </div>
-          </div>
+<div class="inner-wrapper">
+  <div class="inner-main">
+    <div class="content">
+      <style scoped>
+        .title {
+          text-align: center;
+          font-family: 'MonumentGrotesk-Regular';
+          font-weight: 700;
+          color: grey;
+        }
+      </style>
+      <h2 class="title">Hottest posts</h2>
+      <h2 class="title">-</h2>
+      <div id="forum" class="inner-main-body p-2 p-sm-3 collapse forum-content show">
+        <div class="copyright">Cryoverse &copy; 2021 All Rights Reserved</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="copyright">Cryoverse &copy; 2021 All Rights Reserved</div>
-</div>
   <script>
     // This function will be executed when the user scrolls the page.
     var state = undefined;
     $(window).scroll(function(e) {
       // Get the position of the location where the scroller starts.
       var anchor = $("#gallery").offset().top;
+      console.log(anchor);
       if ($(this).scrollTop() >= anchor) {
         state = $(this).scrollTop();
         $('#gallery').removeClass('big_gallery');
@@ -147,5 +138,14 @@
       }
     });
   </script>
+  <!-- Sweet Alert -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>  
+	<!-- Firebase config -->
+	<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+	<script src="js/firebase_config.js"></script>
+	<!-- Utils -->
+	<script src="js/util.js"></script>
+  <!-- Main script -->
+	<script src="js/index.js"></script>
 </body>
 </html>
