@@ -98,7 +98,7 @@
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
-<div class="inner-wrapper">
+<div id="forum-wrapper" class="inner-wrapper">
   <div class="inner-main">
     <div class="content">
       <style scoped>
@@ -110,7 +110,7 @@
         }
       </style>
       <h2 class="title">Hottest posts</h2>
-      <h2 class="title">-</h2>
+      <h2 class="title">~</h2>
       <div id="forum" class="inner-main-body p-2 p-sm-3 collapse forum-content show">
         <div class="copyright">Cryoverse &copy; 2021 All Rights Reserved</div>
         </div>
@@ -124,10 +124,9 @@
     var state = undefined;
     $(window).scroll(function(e) {
       // Get the position of the location where the scroller starts.
-      var anchor = $("#gallery").offset().top;
-      console.log(anchor);
+      var anchor = $("#forum-wrapper").offset().top;
       if ($(this).scrollTop() >= anchor) {
-        state = $(this).scrollTop();
+        state = anchor;
         $('#gallery').removeClass('big_gallery');
         $('#gallery').addClass('small_gallery');
       } else if (state) {
