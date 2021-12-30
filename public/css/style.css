@@ -66,14 +66,14 @@ ol, ul {
   transform: translate(-50%, -50%);
   max-width: 15%;
 }
-.show {
+.myshow {
 	-webkit-box-flex: auto;
 	-ms-flex: auto;
 	flex: auto;
 	width: 220px;
 	margin: 0.4vw;
 }
-.show img {
+.myshow img {
 	width: 100%;
 	height: auto;
 }
@@ -442,12 +442,4 @@ ol, ul {
   font-size: 14px;
   text-align: center;
 }
-}
-
-/*ebay corrections*/
-.stBadge {
-    min-width: auto!important;
-}
-.stBadge img {
-  display:none;
 }
