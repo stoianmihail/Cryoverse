@@ -2,13 +2,33 @@ const ACCOUNTING_COMPANY = 1;
 
 // The current user.
 var current_user = { 'uid' : undefined, 'username' : undefined };
+var user_snap = undefined;
 
 function resetCurrentUser() {
   current_user = { 'uid' : undefined, 'username' : undefined };
+  user_snap = undefined;
 }
 
-function changeWindowLocation(args) {
-  window.location = args['location'];
+// Set the profile image.
+if (document.getElementById('profile_image')) {
+  retrieveCurrentUser(async () => {
+    if (parse_url(window.location.href)['page'] == 'user.html') {
+      $('#about_username').html('@' + current_user.username);
+      if (user_snap) {
+        $('#about_fullname').html(user_snap.fullname);
+        $('#about_academia').html(user_snap.title);
+      }
+    }
+    if (current_user.uid) {
+      const profile = await storage.ref('profiles').child(current_user.uid).getDownloadURL();
+      $('#profile_image').attr('src', profile);
+      $('#profile_image').addClass('img-thumbnail');
+      if (document.getElementById("about_image")) {
+        $('#about_image').attr('src', profile);
+        $('#about_image').addClass('img-thumbnail');
+      }
+    }
+  }, {}, undefined, () => {}, askUserForLogin=false, restoreScreen=false)
 }
 
 function deleteElement(elem) {
@@ -32,7 +52,11 @@ function tag2color(tag) {
 }
 
 // Fetch the user.
-function retrieveCurrentUser(callback, args, page, callfront, askUserForLogin=true, valid=true) {  
+function retrieveCurrentUser(callback, args, page, callfront,
+  // Optional arguments.
+  askUserForLogin=true, restoreScreen=true,
+  // Internal arguemnts, not relevant.
+  isValid=true) {
   console.log('inseddsasasdadsad');
 
   auth.onAuthStateChanged(firebaseUser => {
@@ -40,20 +64,22 @@ function retrieveCurrentUser(callback, args, page, callfront, askUserForLogin=tr
     // Do we still have an user?
     if (firebaseUser) {
       // Check if the request is still valid.
-      if (!valid) return;
-      valid = false;
+      if (!isValid) return;
+      isValid = false;
       
       db.ref('users').child(firebaseUser.uid).once('value', snapshot => {
         if (snapshot.exists()) {
           console.log(snapshot.val());
-          current_user = { uid : firebaseUser.uid, username : snapshot.val().username };          
+          current_user = { uid : firebaseUser.uid, username : snapshot.val().username };
+          user_snap = snapshot.val();          
           if (callback[Symbol.toStringTag] === 'AsyncFunction') {
             callback(args).then(() => {
               callfront();
             });
           } else {
             callback(args);
-            enableScreen();
+            if (restoreScreen)
+              enableScreen();
           }
         } else {
           console.log('Snapshot doesn\'t exist!');
@@ -65,8 +91,9 @@ function retrieveCurrentUser(callback, args, page, callfront, askUserForLogin=tr
       // Reset the current user.
       resetCurrentUser();
 
-      // Enable the screen.
-      enableScreen();
+      // Enable the screen (if asked)
+      if (restoreScreen)
+        enableScreen();
 
       if (askUserForLogin) {
         swal({
@@ -293,7 +320,7 @@ function enableScreen() {
 // ******************************** U R L  U t i l s ********************************
 function parse_url(url) {
   if (url.indexOf('?') === -1)
-    return {};
+    return {'page' : window.location.href.slice(1 + window.location.href.lastIndexOf('/'))};
   let split = url.substring(url.indexOf('?') + 1).split('&');
   let parsed = {};
   split.forEach(element => {

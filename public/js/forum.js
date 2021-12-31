@@ -7,7 +7,9 @@ $('#new-discussion_button').on('click', (e) => {
   // Redirect to new topic with the same tag.
   disableScreen();
   let future_location = 'post.html' + ('tag' in parsed_url ? '?tag=' + parsed_url['tag'] : '');
-  retrieveCurrentUser(changeWindowLocation, {'location' : future_location}, future_location, () => enableScreen());
+  retrieveCurrentUser((args) => {
+    window.location = args['location'];    
+  }, {'location' : future_location}, future_location, () => enableScreen());
 });
 
 async function renderThread(thread_id) {

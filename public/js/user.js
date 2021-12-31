@@ -26,6 +26,9 @@ function renderForum() {
 
       forum = [];
       for (elem of ret) {
+        if (elem.snap.user.uid !== current_user.uid)
+          continue;
+
         console.log('elem=');
         console.log(elem);
         let dict = elem.snap;
@@ -70,26 +73,26 @@ function renderForum() {
       // Build the forum.
       $('#forum').html(forum.join('\n'));
   
-      for (elem of ret) {
-        db.ref('posts').child(elem.id).on('value', snap => {
-          // No snap?
-          if (!snap.exists()) return;
+      // for (elem of ret) {
+      //   db.ref('posts').child(elem.id).on('value', snap => {
+      //     // No snap?
+      //     if (!snap.exists()) return;
 
-          console.log('[refresh] snap=' + snap.val());
+      //     console.log('[refresh] snap=' + snap.val());
 
-          // Refresh the status.
-          let add_info = '';
-          if (snap.val().responses) {
-            let last_reply = get_last_reply(snap.val().responses);
-            add_info = `<p class="text-muted">${last_reply.user.username} replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
-          } else {
-            add_info = `<p class="text-muted">${snap.val().user.username} posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
-          }
+      //     // Refresh the status.
+      //     let add_info = '';
+      //     if (snap.val().responses) {
+      //       let last_reply = get_last_reply(snap.val().responses);
+      //       add_info = `<p class="text-muted">${last_reply.user.username} replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
+      //     } else {
+      //       add_info = `<p class="text-muted">${snap.val().user.username} posted <span class="text-secondary font-weight-bold">${explainTime(snap.val().timestamp, 'ago')}</span></p>`;
+      //     }
 
-          // And reset the html.
-          document.getElementById(`status.${snap.key}`).innerHTML = add_info;
-        });
-      }
+      //     // And reset the html.
+      //     document.getElementById(`status.${snap.key}`).innerHTML = add_info;
+      //   });
+      // }
     });
   });
 }

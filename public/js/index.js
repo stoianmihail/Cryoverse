@@ -76,11 +76,6 @@ function renderForum() {
           </div>`);
       }
 
-      // Add copyright.
-      forum.push(`
-        <div class="copyright">Cryoverse &copy; 2021 All Rights Reserved</div>
-        </div>`);
-
       // Build the forum.
       $('#forum').html(forum.join('\n'));
   

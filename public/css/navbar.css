@@ -79,6 +79,17 @@
   -webkit-transition: all 0.5s ease;
 }
 
+#navbar li input {
+  display: block;
+  font-size: 0.7em;
+  height: 50px;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+}
+
 #navbar li button {
   color: red;
   display: block;
