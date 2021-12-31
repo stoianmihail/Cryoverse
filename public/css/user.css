@@ -2,7 +2,13 @@ body{
     background-color:#ecf2f5;
     margin-top:20px;
 }
-
+.shadow {
+    -webkit-box-shadow: inset 0 6px 6px 0 rgba(0,0,0,.26), 0 4px 20px 1px rgba(0,0,0,.25);
+    -ms-box-shadow: inset 0 6px 6px 0 rgba(0,0,0,.26), 0 4px 20px 1px rgba(0,0,0,.25);
+    -moz-box-shadow: inset 0 6px 6px 0 rgba(0,0,0,.26), 0 4px 20px 1px rgba(0,0,0,.25);
+    -o-box-shadow: inset 0 6px 6px 0 rgba(0,0,0,.26), 0 4px 20px 1px rgba(0,0,0,.25);
+    box-shadow: inset 0 6px 6px 0 rgba(0,0,0,.26), 0 4px 20px 1px rgba(0,0,0,.25);
+}
 .card {
     box-shadow: 0 0 2px 0 rgb(0 0 0 / 10%);
     margin-bottom: 24px;
