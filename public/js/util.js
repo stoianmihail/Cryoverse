@@ -60,7 +60,6 @@ function retrieveCurrentUser(callback, args, page, callfront,
   console.log('inseddsasasdadsad');
 
   auth.onAuthStateChanged(firebaseUser => {
-    console.log(firebaseUser);
     // Do we still have an user?
     if (firebaseUser) {
       // Check if the request is still valid.
@@ -129,8 +128,8 @@ function prettify(invoiceName) {
   return invoiceName.slice(getPosition(invoiceName, '_', 2) + 1, invoiceName.length);
 }
 
-async function fetchProfile(id, snap) {
-  let uid = snap.user.uid;
+async function fetchProfile(id, snap, isUser=false) {
+  let uid = isUser ? id : snap.user.uid;
   profile = await storage.ref('profiles').child(uid).getDownloadURL();
   return {'id' : id, 'snap' : snap, 'url' : profile};
 }
