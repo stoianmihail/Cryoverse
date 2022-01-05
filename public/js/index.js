@@ -32,10 +32,10 @@ function renderForum() {
         let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
         let num_eyes = Math.floor(Math.random() * 1000);
 
-        let tagsWithColors = [];
+        let tags = [];
         if (dict.tags.length) {
           for (tag of dict.tags.split(',')) {
-            tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
+            tags.push(`#${tag}`);
           }
         }
 
@@ -65,7 +65,7 @@ function renderForum() {
                   <h6>${dict.title}</h6>
                   <p class="text-secondary">${shown_content}</p>
                   <div id='status.${elem.id}'>${add_info}</div>
-                  ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                  ${(tags.length) ? '<p><span class="text-secondary">Tags: </span>' + tags.join(' ') + '</p>' : ''}
                 </div>
                 <div class="text-muted small text-center align-self-center">
                   <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>

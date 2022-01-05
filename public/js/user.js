@@ -20,8 +20,9 @@ function renderTeam() {
           </a>`);
       }
 
-      // Build the team.
-      $('#team').html(team.join('\n'));
+      // Build the teams.
+      $('#wsi-team').html(team.join('\n'));
+      $('#tum-team').html(team.join('\n'));
     });
   });
 }
@@ -60,7 +61,7 @@ function renderForum() {
         let tagsWithColors = [];
         if (dict.tags.length) {
           for (tag of dict.tags.split(',')) {
-            tagsWithColors.push(`<mark style='background: ${tag2color(tag)}'>#${tag}</mark>`);
+            tagsWithColors.push(`<mark style='background: ${tag2color(tag)}; border-radius: 5px;'>#${tag}</mark>`);
           }
         }
 
