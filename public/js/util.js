@@ -12,7 +12,7 @@ function resetCurrentUser() {
 // Set the profile image.
 if (document.getElementById('profile_image')) {
   retrieveCurrentUser(async () => {
-    if (parse_url(window.location.href)['page'] == 'user.html') {
+    if (parse_url(window.location.href)['page'].startsWith('user.html')) {
       $('#about_username').html('@' + current_user.username);
       if (user_snap) {
         $('#about_fullname').html(user_snap.fullname);

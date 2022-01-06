@@ -1,5 +1,30 @@
 var parsed_url = parse_url(window.location.href);
 
+function renderInbox() {
+  db.ref('users').once('value', snap => {
+    Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val(), isUser=true)))
+    .then((ret) => {
+      inbox = [];
+      for (elem of ret) {
+        if (elem.id === current_user.uid)
+          continue;
+        inbox.push(
+          `<div class="d-flex align-items-center pb-1" id="tooltips-container">
+            <img src="${elem.url}" class="rounded-circle img-fluid avatar-md img-thumbnail bg-transparent" alt="">
+            <div class="w-100 ms-3">
+              <h5 class="mb-1">${elem.snap[elem.id].username}</h5>
+              <p class="mb-0 font-13">I've finished it! Thanks a lot for the hint!</p>
+            </div>
+            <a href="#" class="btn btn-sm btn-soft-info font-13" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Reply"> <i class="mdi mdi-reply"></i> </a>
+          </div>`);
+      }
+
+      // Build the teams.
+      $('#inbox').html(inbox.join('\n'));
+    });
+  });
+}
+
 function renderTeam() {
   db.ref('users').once('value', snap => {
     Promise.all(Object.keys(snap.val() ? snap.val() : {}).map(key => fetchProfile(key, snap.val(), isUser=true)))
@@ -106,3 +131,4 @@ function renderForum() {
 
 renderForum();
 renderTeam();
+renderInbox();
