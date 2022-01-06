@@ -196,6 +196,12 @@ function activateToggles() {
 }
 
 function renderForum() {
+  function has_tag(tags) {
+    if ('tag' in parsed_url)
+      return tags.split(',').includes(parsed_url['tag']);
+    return true;
+  }
+  
   function get_last_reply(responses) {
     if (!responses)
       return undefined;
@@ -220,9 +226,11 @@ function renderForum() {
       console.log(ret);
 
       forum = [];
+      filtered = [];
       for (elem of ret) {
-        console.log('elem=');
-        console.log(elem);
+        if (!has_tag(elem.snap.tags))
+          continue;
+        filtered.push(elem);
         let dict = elem.snap;
         let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
         let num_eyes = Math.floor(Math.random() * 1000);
@@ -288,7 +296,7 @@ function renderForum() {
       // Build the forum.
       $('#forum').html(forum.join('\n'));
   
-      for (elem of ret) {
+      for (elem of filtered) {
         db.ref('posts').child(elem.id).on('value', snap => {
           // No snap?
           if (!snap.exists()) return;
