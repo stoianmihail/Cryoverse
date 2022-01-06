@@ -319,9 +319,11 @@ function enableScreen() {
 // ******************************** U R L  U t i l s ********************************
 function parse_url(url) {
   if (url.indexOf('?') === -1)
-    return {'page' : window.location.href.slice(1 + window.location.href.lastIndexOf('/'))};
+    return {'page' : url.slice(1 + url.lastIndexOf('/'))};
   let split = url.substring(url.indexOf('?') + 1).split('&');
-  let parsed = {};
+  let parsed = {
+    'page' : url.slice(1 + url.lastIndexOf('/'), url.indexOf('?'))
+  };
   split.forEach(element => {
     let content = element.split('=', limit=1);
     parsed[content[0]] = element.substring(element.indexOf('=') + 1);
