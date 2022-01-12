@@ -17,6 +17,7 @@ function renderInbox() {
             </div>
             <a href="#" class="btn btn-sm btn-soft-info font-13" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Reply"> <i class="mdi mdi-reply"></i> </a>
           </div>`);
+        break;
       }
 
       // Build the teams.

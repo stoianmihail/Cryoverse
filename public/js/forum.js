@@ -232,7 +232,7 @@ function renderForum() {
           continue;
         filtered.push(elem);
         let dict = elem.snap;
-        let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
+        let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128)) + '..';
         let num_eyes = Math.floor(Math.random() * 1000);
 
         let tagsWithColors = [];

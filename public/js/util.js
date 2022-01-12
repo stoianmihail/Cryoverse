@@ -97,7 +97,7 @@ function retrieveCurrentUser(callback, args, page, callfront,
 
       if (askUserForLogin) {
         swal({
-          title: `You're not currently logged in`,
+          title: `You're currently not logged in.`,
           text: "Do you want to login?",
           icon: "warning",
           buttons: [
