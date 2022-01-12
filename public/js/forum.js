@@ -244,13 +244,9 @@ function renderForum() {
 
         let add_info = '';
         if (dict.responses) {
-          console.log(dict.responses);
           let last_reply = get_last_reply(dict.responses);
-          console.log(last_reply);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
-          console.log(`whatt??????`);
-          console.log(elem.snap.user);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
@@ -278,34 +274,6 @@ function renderForum() {
                 </div>
               </div>
             </div>`);
-
-
-
-/*
-
-        forum.push(`
-          <div class="card mb-2">
-            <div class="card-body p-2 p-sm-3">
-              <div class="media forum-item">
-                <a href="javascript:void(0)" class="card-link">
-                  <center>
-                    <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
-                  </center>
-                  <small class="d-block text-center text-muted">${elem.snap.user.username}</small>
-                </a>
-                <div class="media-body">
-                  <h6><a id='${elem.id}' href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">${dict.title}</a></h6>
-                  <p class="text-secondary">${shown_content}</p>
-                  <div id='status.${elem.id}'>${add_info}</div>
-                  ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
-                </div>
-                <div class="text-muted small text-center align-self-center">
-                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
-                  <span><i class="far fa-comment ml-2"></i> 3</span>
-                </div>
-              </div>
-            </div>
-          </div>`);*/
       }
 
       // Add arrows.

@@ -26,54 +26,49 @@ function renderForum() {
 
       forum = [];
       for (elem of ret) {
-        console.log('elem=');
-        console.log(elem);
         let dict = elem.snap;
         let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
         let num_eyes = Math.floor(Math.random() * 1000);
 
-        let tags = [];
+        let tagsWithColors = [];
         if (dict.tags.length) {
           for (tag of dict.tags.split(',')) {
-            tags.push(`#${tag}`);
+            tagsWithColors.push(`<mark style='background: #F5F5F5; border-radius: 5px;'>#${tag}</mark>`);
           }
         }
 
         let add_info = '';
         if (dict.responses) {
-          console.log(dict.responses);
           let last_reply = get_last_reply(dict.responses);
-          console.log(last_reply);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${last_reply.user.username}</a> replied <span class="text-secondary font-weight-bold">${explainTime(last_reply.timestamp, 'ago')}</span></p>`;
         } else {
-          console.log(`whatt??????`);
-          console.log(elem.snap.user);
           add_info = `<p class="text-muted"><a href="javascript:void(0)">${elem.snap.user.username}</a> posted <span class="text-secondary font-weight-bold">${explainTime(dict.timestamp, 'ago')}</span></p>`;
         }
 
-        forum.push(`
-          <div class="card mb-2">
-            <div class="card-body p-2 p-sm-3">
+        forum.push(
+          `<div class="card mb-2">
+            <div class="card-body">
               <div class="media forum-item">
-                  <a href="javascript:void(0)" class="card-link">
-                  <center>
-                    <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
-                  </center>
-                  <small class="d-block text-center text-muted">${elem.snap.user.username}</small>
+                <a href="javascript:void(0)" class="card-link">
+                  <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
+                  <small class="d-block text-center text-muted"></small>
                 </a>
-                <div class="media-body" style="margin-left: 20px;">
+                <div class="media-body ml-3">
+                  <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <h6>${dict.title}</h6>
-                  <p class="text-secondary">${shown_content}</p>
-                  <div id='status.${elem.id}'>${add_info}</div>
-                  ${(tags.length) ? '<p><span class="text-secondary">Tags: </span>' + tags.join(' ') + '</p>' : ''}
-                </div>
-                <div class="text-muted small text-center align-self-center">
-                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
-                  <span><i class="far fa-comment ml-2"></i> 3</span>
+                  <div class="mt-3 font-size-sm">
+                    <p>${shown_content}</p>
+                  </div>
+                    <div id='status.${elem.id}'>${add_info}</div>
+                    ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                  </div>
+                  <div class="text-muted small text-center">
+                    <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
+                    <span><i class="far fa-comment ml-2"></i> 3</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>`);
+            </div>`);
       }
 
       // Build the forum.
