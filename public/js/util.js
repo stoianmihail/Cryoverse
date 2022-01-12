@@ -20,6 +20,7 @@ if (document.getElementById('profile_image')) {
       }
     }
     if (current_user.uid) {
+      $("#sign_out").css('display', 'inline-block');
       const profile = await storage.ref('profiles').child(current_user.uid).getDownloadURL();
       $('#profile_image').attr('src', profile);
       $('#profile_image').addClass('img-thumbnail');

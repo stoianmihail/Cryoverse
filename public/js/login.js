@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           // Unreachable (if the app works correctly)
           console.log("No username found!");
         } else {
-          let url = 'http://www.gravatar.com/avatar/' + email_md5 + '?d=identicon';
+          let url = 'https://www.gravatar.com/avatar/' + email_md5 + '?d=identicon';
           console.log(url);
           uploadToStorage = (imageURL) => {
             getFileBlob(imageURL, blob => {

@@ -55,13 +55,13 @@ function renderForum() {
           <div class="card mb-2">
             <div class="card-body p-2 p-sm-3">
               <div class="media forum-item">
-                <a href="javascript:void(0)" class="card-link">
+                  <a href="javascript:void(0)" class="card-link">
                   <center>
                     <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   </center>
                   <small class="d-block text-center text-muted">${elem.snap.user.username}</small>
                 </a>
-                <div class="media-body">
+                <div class="media-body" style="margin-left: 20px;">
                   <h6>${dict.title}</h6>
                   <p class="text-secondary">${shown_content}</p>
                   <div id='status.${elem.id}'>${add_info}</div>

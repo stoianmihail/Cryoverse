@@ -86,7 +86,7 @@ function renderForum() {
         let tagsWithColors = [];
         if (dict.tags.length) {
           for (tag of dict.tags.split(',')) {
-            tagsWithColors.push(`<mark style='background: ${tag2color(tag)}; border-radius: 5px;'>#${tag}</mark>`);
+            tagsWithColors.push(`<mark style='background: #F5F5F5; border-radius: 5px;'>#${tag}</mark>`);
           }
         }
 
