@@ -28,8 +28,6 @@ async function renderThread(thread_id) {
       }
     }
 
-    console.log(ret.snap);
-
     let num_stars = Math.floor(Math.random() * 500);
     $('#thread').html(`
       <div class="card mb-2">
