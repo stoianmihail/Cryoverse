@@ -127,6 +127,18 @@ function renderForum() {
 
       console.log(ret);
 
+      function has_tag(tags, needle) {
+        console.log(needle);
+        console.log(tags.split(','));
+        console.log(tags.split(',').includes(needle));
+        return tags.split(',').includes(needle);
+      }
+      let taken = {
+        'sample' : 1,
+        'magnets' : 1,
+        'cryocooler' : 1
+      }
+
       forum = [];
       for (elem of ret) {
         let dict = elem.snap;
@@ -137,6 +149,17 @@ function renderForum() {
         if (dict.tags.length) {
           for (tag of dict.tags.split(',')) {
             tagsWithColors.push(`<mark style='background: #F5F5F5; border-radius: 5px;'>#${tag}</mark>`);
+          }
+        }
+
+        let img_html = ``;
+        for (const key in taken) {
+          if (taken[key] === 1) {
+            if (has_tag(dict.tags, key)) {
+              img_html = `<img class="post_img" src="assets/img/${key}-post.png"/>`;
+              taken[key] = 0;
+              break;
+            }
           }
         }
 
@@ -162,16 +185,17 @@ function renderForum() {
                   <div class="mt-3 font-size-sm">
                     <p>${shown_content}</p>
                   </div>
-                    <div id='status.${elem.id}'>${add_info}</div>
-                    ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
-                  </div>
-                  <div class="text-muted small text-center">
-                    <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
-                    <span><i class="far fa-comment ml-2"></i> 3</span>
-                  </div>
+                  ${img_html}
+                  <div id='status.${elem.id}'>${add_info}</div>
+                  ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                </div>
+                <div class="text-muted small text-center">
+                  <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> ${num_eyes}</span>
+                  <span><i class="far fa-comment ml-2"></i> 3</span>
                 </div>
               </div>
-            </div>`);
+            </div>
+          </div>`);
       }
 
       // Build the forum.
