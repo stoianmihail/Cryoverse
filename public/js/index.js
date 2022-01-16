@@ -1,5 +1,108 @@
 var parsed_url = parse_url(window.location.href);
 
+async function renderThread(thread_id) {
+  // Init the thread.
+  $('#thread').html('');
+
+  // Fetch the profile.
+  const snap = await db.ref(`posts/${thread_id}`).once('value');
+
+  console.log(snap.val());
+
+  fetchProfile(thread_id, snap.val()).then((ret) => {
+    let dict = ret.snap;
+    let nl_time = explainTime(dict.timestamp, 'ago');
+    let tagsWithColors = [];
+    if (dict.tags.length) {
+      for (tag of dict.tags.split(',')) {
+        tagsWithColors.push(`<mark style='background: #F5F5F5'>#${tag}</mark>`);
+      }
+    }
+
+    let num_stars = Math.floor(Math.random() * 500);
+    $('#thread').html(`
+      <div class="card mb-2">
+        <div class="card-body">
+            <div class="media forum-item">
+                <a href="javascript:void(0)" class="card-link">
+                    <img src="${ret.url}" class="rounded-circle" width="50" alt="User" />
+                    <small class="d-block text-center text-muted"></small>
+                </a>
+                <div class="media-body ml-3">
+                    <a href="javascript:void(0)" class="text-secondary">${ret.snap.user.username}</a>
+                    <small class="text-muted ml-2">${nl_time}</small>
+                    <h5 class="mt-1">${dict.title}</h5>
+                    <div class="mt-3 font-size-sm">
+                        <p>${text2html(dict.content)}</p>
+                    </div>
+                    ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                </div>
+                <div class="text-muted small text-center">
+                    <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
+                    <span><i class="far fa-comment ml-2"></i> 3</span>
+                </div>
+            </div>
+        </div>
+    </div>`);
+
+    // And then the profile of the users within the responses.
+    Promise.all(Object.keys(dict.responses ? dict.responses : {}).map(key => fetchProfile(key, dict.responses[key])))
+    .then((ret) => {
+      ret.sort(function(first, second) {
+        return -(second.snap.timestamp - first.snap.timestamp);
+      });
+
+      for (elem of ret) {
+        let response = elem.snap;
+        let local_time = explainTime(response.timestamp, 'ago');
+        $(`#thread`).append(`
+          <div class="card mb-2">
+            <div class="card-body">
+              <div class="media forum-item">
+                <a href="javascript:void(0)" class="card-link">
+                  <img src="${elem.url}" class="rounded-circle" width="50" alt="User" />
+                  <small class="d-block text-center text-muted"></small>
+                </a>
+                <div class="media-body ml-3" style="margin-left: 50px;">
+                  <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
+                  <small class="text-muted ml-2">${local_time}</small>
+                  <div class="mt-3 font-size-sm">
+                    <p>${text2html(response.content)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`);
+      }
+    });
+  });
+}
+
+async function executeCollapse(id) {
+  await renderThread(id);
+}
+
+var curr = undefined;
+
+function activateToggles() {
+  $('[data-toggle="collapse"]').click(function() {
+    console.log(curr);
+    console.log($(this));
+    if ((curr !== undefined) && ($(this).attr('id') == curr)) {
+      return;
+    }
+  
+    curr = $(this).attr('id');
+    if (curr !== 'back_button') {
+      executeCollapse(curr).then(() => {
+        curr = undefined;
+      });
+    } else {
+      curr = undefined;
+    }
+  });
+}
+
 function renderForum() {
   function get_last_reply(responses) {
     if (!responses)
@@ -53,7 +156,7 @@ function renderForum() {
                   <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   <small class="d-block text-center text-muted"></small>
                 </a>
-                <div class="media-body ml-3">
+                <div id='${elem.id}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
                   <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <h6>${dict.title}</h6>
                   <div class="mt-3 font-size-sm">
@@ -94,6 +197,9 @@ function renderForum() {
           document.getElementById(`status.${snap.key}`).innerHTML = add_info;
         });
       }
+
+      // Activate toggles.
+      activateToggles();
     });
   });
 }

@@ -183,9 +183,6 @@ function activateToggles() {
     }
   
     curr = $(this).attr('id');
-  
-    console.log(curr);
-  
     if (curr !== 'back_button') {
       executeCollapse(curr).then(() => {
         curr = undefined;
