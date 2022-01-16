@@ -52,11 +52,26 @@
         <input type="text" class="form-control form-control-sm shadow-none mb-3 mt-3" style="width: 25%; float: right;"  placeholder="Search.." />
       </span>
     </div>
-  </nav>
+  </nav>  
 
-  <!-- Gallery -->
-  <div id="gallery" class="rl_pf big_gallery">
-    <!-- #7 -->
+  <ul class="nav nav-tabs nav-justified">
+    <li class="nav-item">
+      <a class="nav-link enabled" data-toggle="tab" onclick="window.location = 'forum.html?tag=vibrations'" role="tab">
+        Vibrations
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link enabled" data-toggle="tab" onclick="window.location = 'forum.html?tag=magnets'" role="tab">Magnets</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link enabled" data-toggle="tab" onclick="window.location = 'forum.html?tag=temperature'" role="tab">Temperature Range</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link enabled" data-toggle="tab" onclick="window.location = 'forum.html?tag=sample'" role="tab">Sample Container</a>
+    </li>
+  </ul>
+
+  <div id="gallery" style="display: none;" class="rl_pf big_gallery">
     <div class="myshow show item open-item">
       <a href="forum.html?tag=vibrations">
         <span class="full-link"></span>
@@ -68,8 +83,6 @@
         <span class="pf_viewmore">[ VIEW ]</span>
       </div>
     </div>
-    <!--/#7 -->
-    <!-- #8 -->
     <div class="myshow show item open-item">
       <a href="forum.html?tag=magnets">
         <span class="full-link"></span>
@@ -81,8 +94,6 @@
         <span class="pf_viewmore">[ VIEW ]</span>
       </div>
     </div>
-    <!--/#8 -->
-    <!-- #9 -->
     <div class="myshow show item open-item">
       <a href="forum.html?tag=temperature">
         <span class="full-link"></span>
@@ -94,8 +105,6 @@
         <span class="pf_viewmore">[ VIEW ]</span>
       </div>
     </div>
-    <!--/#9 -->
-    <!-- #10 -->
     <div class="myshow show item open-item">
       <a href="forum.html?tag=sample">
         <span class="full-link"></span>
@@ -142,8 +151,10 @@
         state = anchor;
         $('#gallery').removeClass('big_gallery');
         $('#gallery').addClass('small_gallery');
+        $('#gallery').show();
       } else if (state) {
         if ($(this).scrollTop() <= state) {
+          $('#gallery').hide();
           $('#gallery').removeClass('small_gallery');
           $('#gallery').addClass('big_gallery');
         }
