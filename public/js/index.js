@@ -49,7 +49,7 @@ function renderForum() {
           `<div class="card mb-2">
             <div class="card-body">
               <div class="media forum-item">
-                <a href="javascript:void(0)" class="card-link">
+                <a href="user.html?uid=${dict.user.uid}" class="card-link">
                   <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   <small class="d-block text-center text-muted"></small>
                 </a>

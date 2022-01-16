@@ -70,7 +70,7 @@ ol, ul {
 	-webkit-box-flex: auto;
 	-ms-flex: auto;
 	flex: auto;
-	width: 220px;
+	width: 200px;
 	margin: 0.4vw;
 }
 .myshow img {
@@ -91,7 +91,7 @@ ol, ul {
   -moz-border-radius: 4px;
   -o-border-radius: 4px;
   border-radius: 4px;
-  max-width: 250px;
+  max-width: 200px;
 }
 .item .pf_content {
 	width: 100%;

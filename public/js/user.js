@@ -1,4 +1,5 @@
 var parsed_url = parse_url(window.location.href);
+var curr_uid = 'uid' in parsed_url ? parsed_url.uid : undefined;
 
 function renderInbox() {
   db.ref('users').once('value', snap => {
@@ -75,9 +76,13 @@ function renderForum() {
         return second.snap.timestamp - first.snap.timestamp;
       });
 
+      // Refresh the uid.
+      if (curr_uid === undefined)
+        curr_uid = current_user.uid;
+
       forum = [];
       for (elem of ret) {
-        if (elem.snap.user.uid !== current_user.uid)
+        if (elem.snap.user.uid !== curr_uid)
           continue;
 
         let dict = elem.snap;

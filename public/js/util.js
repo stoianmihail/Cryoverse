@@ -12,22 +12,46 @@ function resetCurrentUser() {
 // Set the profile image.
 if (document.getElementById('profile_image')) {
   retrieveCurrentUser(async () => {
-    if (parse_url(window.location.href)['page'].startsWith('user.html')) {
-      $('#about_username').html('@' + current_user.username);
-      if (user_snap) {
-        $('#about_fullname').html(user_snap.fullname);
-        $('#about_academia').html(user_snap.title);
+    let parsed_url = parse_url(window.location.href);
+    let uid = ('uid' in parsed_url ? parsed_url.uid : current_user.uid);
+
+    // Check whether we're on the user page.
+    if (parsed_url['page'].startsWith('user.html')) {
+      // Another user?
+      if (uid !== current_user.uid) {
+        db.ref('users').child(parsed_url.uid).once('value', snapshot => {
+          if (snapshot.exists()) {            
+            $('#about_username').html('@' + snapshot.val().username);
+            $('#about_fullname').html(snapshot.val().fullname);
+            $('#about_academia').html(snapshot.val().title);
+          } else {
+            console.log('Snapshot doesn\'t exist!');
+          }
+        }).catch((e) => {
+          console.log(e);
+        });
+      } else {
+        $('#about_username').html('@' + current_user.username);
+        if (user_snap) {
+          $('#about_fullname').html(user_snap.fullname);
+          $('#about_academia').html(user_snap.title);
+        }
       }
     }
-    if (current_user.uid) {
-      $("#sign_out").css('display', 'inline-block');
-      const profile = await storage.ref('profiles').child(current_user.uid).getDownloadURL();
-      $('#profile_image').attr('src', profile);
-      $('#profile_image').addClass('img-thumbnail');
-      if (document.getElementById("about_image")) {
+
+    // Common login utils.
+    $("#sign_out").css('display', 'inline-block');
+    const profile = await storage.ref('profiles').child(current_user.uid).getDownloadURL();
+    $('#profile_image').attr('src', profile);
+    $('#profile_image').addClass('img-thumbnail');
+    if (document.getElementById("about_image")) {
+      if (uid !== current_user.uid) {
+        const other_profile = await storage.ref('profiles').child(uid).getDownloadURL();
+        $('#about_image').attr('src', other_profile);
+      } else {
         $('#about_image').attr('src', profile);
-        $('#about_image').addClass('img-thumbnail');
       }
+      $('#about_image').addClass('img-thumbnail');
     }
   }, {}, undefined, () => {}, askUserForLogin=false, restoreScreen=false)
 }

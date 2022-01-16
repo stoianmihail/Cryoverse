@@ -18,6 +18,9 @@ async function renderThread(thread_id) {
 
   // Fetch the profile.
   const snap = await db.ref(`posts/${thread_id}`).once('value');
+
+  console.log(snap.val());
+
   fetchProfile(thread_id, snap.val()).then((ret) => {
     let dict = ret.snap;
     let nl_time = explainTime(dict.timestamp, 'ago');
@@ -251,12 +254,12 @@ function renderForum() {
         forum.push(
           `<div class="card mb-2">
             <div class="card-body">
-              <div id='${elem.id}' class="media forum-item" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
-                <a href="javascript:void(0)" class="card-link">
+              <div class="media forum-item">
+                <a href="user.html?uid=${dict.user.uid}" class="card-link">
                   <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   <small class="d-block text-center text-muted"></small>
                 </a>
-                <div class="media-body ml-3">
+                <div id='${elem.id}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
                   <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <h6>${dict.title}</h6>
                   <div class="mt-3 font-size-sm">
