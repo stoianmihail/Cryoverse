@@ -1,5 +1,11 @@
 var parsed_url = parse_url(window.location.href);
 
+function increase() {
+  let curr = $('#star-counter').html();
+  $('#star-counter').html(1 + parseInt(curr));
+  $('#star-icon').css('color', '#FFC300');
+}
+
 $('#new-discussion_button').on('click', (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -31,7 +37,7 @@ async function renderThread(thread_id) {
       }
     }
 
-    let num_stars = Math.floor(Math.random() * 500);
+    let num_stars = Math.floor(Math.random() * 50);
     $('#thread').html(`
       <div class="card mb-2">
         <div class="card-body">
@@ -48,7 +54,7 @@ async function renderThread(thread_id) {
                         <p>${text2html(dict.content)}</p>
                     </div>
                     ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
-                    <p>Actions: <button class="btn-sm btn far fa-star"> Star (${num_stars})</button><button class="btn-sm btn far fa-bookmark"> Bookmark</button><button id='${thread_id}' class="btn-sm btn fa fa-reply" onclick='reply(this);'> Reply</button></p>
+                    <p>Actions: <button class="btn-sm btn" onclick="increase();"><i id="star-icon" class="far fa-star"></i> Star (<span id="star-counter">${num_stars}</span>)</button><button class="btn-sm btn"><i class="far fa-bookmark"></i> Bookmark</button><button id='${thread_id}' class="btn-sm btn" onclick='reply(this);'><i class="fa fa-reply"></i> Reply</button></p>
                 </div>
                 <div class="text-muted small text-center">
                     <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
@@ -305,8 +311,8 @@ function renderForum() {
           <li class="page-item disabled">
             <span class="page-link has-icon"><i class="material-icons">chevron_left</i></span>
           </li>
-          <li class="page-item"><a class="page-link" href="javascript:void(0)">1</a></li>
-          <li class="page-item active"><span class="page-link">2</span></li>
+          <li class="page-item active"><a class="page-link" href="javascript:void(0)">1</a></li>
+          <li class="page-item"><span class="page-link">2</span></li>
           <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
           <li class="page-item">
             <a class="page-link has-icon" href="javascript:void(0)"><i class="material-icons">chevron_right</i></a>
