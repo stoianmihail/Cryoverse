@@ -1,6 +1,12 @@
 var parsed_url = parse_url(window.location.href);
 
-async function renderThread(thread_id) {
+function increase() {
+  let curr = $('#star-counter').html();
+  $('#star-counter').html(1 + parseInt(curr));
+  $('#star-icon').css('color', '#FFC300');
+}
+
+async function renderThread(thread_id, img) {
   // Init the thread.
   $('#thread').html('');
 
@@ -19,7 +25,7 @@ async function renderThread(thread_id) {
       }
     }
 
-    let num_stars = Math.floor(Math.random() * 500);
+    let num_stars = Math.floor(Math.random() * 50);
     $('#thread').html(`
       <div class="card mb-2">
         <div class="card-body">
@@ -35,7 +41,9 @@ async function renderThread(thread_id) {
                     <div class="mt-3 font-size-sm">
                         <p>${text2html(dict.content)}</p>
                     </div>
+                    <div style="margin-bottom: 10px;">${img}</div>
                     ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
+                    <p>Actions: <button class="btn-sm btn" onclick="increase();"><i id="star-icon" class="far fa-star"></i> Star (<span id="star-counter">${num_stars}</span>)</button><button class="btn-sm btn"><i class="far fa-bookmark"></i> Bookmark</button></p>
                 </div>
                 <div class="text-muted small text-center">
                     <span class="d-none d-sm-inline-block"><i class="far fa-eye"></i> 19</span>
@@ -78,8 +86,8 @@ async function renderThread(thread_id) {
   });
 }
 
-async function executeCollapse(id) {
-  await renderThread(id);
+async function executeCollapse(id, img) {
+  await renderThread(id, img);
 }
 
 var curr = undefined;
@@ -93,8 +101,9 @@ function activateToggles() {
     }
   
     curr = $(this).attr('id');
+    let img = $(this).attr("data-img");
     if (curr !== 'back_button') {
-      executeCollapse(curr).then(() => {
+      executeCollapse(curr, img).then(() => {
         curr = undefined;
       });
     } else {
@@ -181,7 +190,7 @@ function renderForum() {
                   <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   <small class="d-block text-center text-muted"></small>
                 </a>
-                <div id='${elem.id}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
+                <div id='${elem.id}' data-img='${img_html}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
                   <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <h6>${dict.title}</h6>
                   <div class="mt-3 font-size-sm">

@@ -18,7 +18,7 @@ $('#new-discussion_button').on('click', (e) => {
   }, {'location' : future_location}, future_location, () => enableScreen());
 });
 
-async function renderThread(thread_id) {
+async function renderThread(thread_id, img) {
   // Init the thread.
   $('#thread').html('');
 
@@ -53,6 +53,7 @@ async function renderThread(thread_id) {
                     <div class="mt-3 font-size-sm">
                         <p>${text2html(dict.content)}</p>
                     </div>
+                    <div style="margin-bottom: 10px;">${img}</div>
                     ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
                     <p>Actions: <button class="btn-sm btn" onclick="increase();"><i id="star-icon" class="far fa-star"></i> Star (<span id="star-counter">${num_stars}</span>)</button><button class="btn-sm btn"><i class="far fa-bookmark"></i> Bookmark</button><button id='${thread_id}' class="btn-sm btn" onclick='reply(this);'><i class="fa fa-reply"></i> Reply</button></p>
                 </div>
@@ -174,8 +175,8 @@ function reply(elem) {
   }, { id : elem.id }, window.location.href, () => {});
 }
 
-async function executeCollapse(id) {
-  await renderThread(id);
+async function executeCollapse(id, img) {
+  await renderThread(id, img);
 }
 
 var curr = undefined;
@@ -189,8 +190,9 @@ function activateToggles() {
     }
   
     curr = $(this).attr('id');
+    let img = $(this).attr('data-img');
     if (curr !== 'back_button') {
-      executeCollapse(curr).then(() => {
+      executeCollapse(curr, img).then(() => {
         curr = undefined;
       });
     } else {
@@ -286,7 +288,7 @@ function renderForum() {
                   <img id='profile.${elem}' src="${elem.url}" class="rounded-circle" width="50" alt="User" />
                   <small class="d-block text-center text-muted"></small>
                 </a>
-                <div id='${elem.id}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
+                <div id='${elem.id}' data-img='${img_html}' class="media-body ml-3" href="#" data-toggle="collapse" data-target=".forum-content" class="text-body">
                   <a href="javascript:void(0)" class="text-secondary">${elem.snap.user.username}</a>
                   <h6>${dict.title}</h6>
                   <div class="mt-3 font-size-sm">

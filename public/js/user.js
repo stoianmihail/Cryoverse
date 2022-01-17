@@ -87,7 +87,7 @@ function renderForum() {
 
         let dict = elem.snap;
         let shown_content = dict.content.slice(0, Math.min(dict.content.length, 128));
-        let num_eyes = Math.floor(Math.random() * 1000);
+        let num_eyes = Math.floor(Math.random() * 50);
 
         let tagsWithColors = [];
         if (dict.tags.length) {
@@ -117,7 +117,7 @@ function renderForum() {
                 <div id='status.${elem.id}'>${add_info}</div>
               </div>
             </div>
-            <h5 style="margin-left: 50px;"><a href="#">${dict.title}</a></h5>
+            <p style="margin-left: 50px;">${dict.title}</p>
             <div style="margin-top: 25px;">
               ${(tagsWithColors.length) ? '<p>Tags: ' + tagsWithColors.join(' ') + '<p>' : ''}
             </div>
