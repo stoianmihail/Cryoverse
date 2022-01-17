@@ -127,7 +127,7 @@ function renderForum() {
 
       console.log(ret);
 
-      function has_tag(tags, needle) {
+      function contains(tags, needle) {
         console.log(needle);
         console.log(tags.split(','));
         console.log(tags.split(',').includes(needle));
@@ -136,7 +136,8 @@ function renderForum() {
       let taken = {
         'sample' : 1,
         'magnets' : 1,
-        'cryocooler' : 1
+        'cryocooler' : 1,
+        'vibrations' : 1,
       }
 
       forum = [];
@@ -155,7 +156,8 @@ function renderForum() {
         let img_html = ``;
         for (const key in taken) {
           if (taken[key] === 1) {
-            if (has_tag(dict.tags, key)) {
+            console.log('key=' + key + ' containes=' + contains(dict.tags, key));
+            if (contains(dict.tags, key)) {
               img_html = `<img class="post_img" src="assets/img/${key}-post.png"/>`;
               taken[key] = 0;
               break;
