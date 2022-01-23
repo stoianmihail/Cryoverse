@@ -2,7 +2,8 @@
 
 Cryoverse allows researchers to share their cryostat optimisations and serves as a knowledge base for young researchers seeking help with their experiments.
 
-**App**: https://cryoverse.web.app\
+**App**: https://cryoverse.web.app
+
 **Repository**: https://github.com/stoianmihail/Cryoverse
 
 Implemented as an web app on Firebase, Cryoverse uses HTML5, Javascript, CSS, and the Bootstrap framework. We’ve enabled the authentification, database, hosting, and storage functionalities of Firebase.
@@ -61,15 +62,7 @@ The page displays on the left side the username, a short description of the user
 
 As a main feature of Cryoverse, the user is able to create/participate teams within the institutions he/she works at. There is also an inbox feature, where the logged user can send private messages.
 
-![](https://github.com/stoianmihail/Cryoverse/blob/main/screenshots/inbox.png?raw=true)
+![](https://github.com/stoianmihail/Cryoverse/blob/main/screenshots/inbox.png)
 
 On the right side, there is an overview of all posts the respective user has posted.
 The total amount of posts and stars collected contribute to the reputation of the respective user.
-
-
-
-                    
-
-
-
-
