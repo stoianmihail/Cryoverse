@@ -2,7 +2,7 @@
 
 Cryoverse allows researchers to share their cryostat optimisations and serves as a knowledge base for young researchers seeking help with their experiments.
 
-**App**: https://cryoverse.web.app
+**App**: https://cryoverse.web.app\
 **Repository**: https://github.com/stoianmihail/Cryoverse
 
 Implemented as an web app on Firebase, Cryoverse uses HTML5, Javascript, CSS, and the Bootstrap framework. We’ve enabled the authentification, database, hosting, and storage functionalities of Firebase.
